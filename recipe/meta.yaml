@@ -199,6 +199,11 @@ about:
 
 extra:
   feedstock-name: {{ name }}
+  anaconda-services:
+    ref: https://anaconda.zendesk.com/agent/tickets/47182
+    reason: Client request
+  recipe-maintainers:
+    - ianaobi
   recipe-maintainers:
     - ryanvolz
     - ianaobi
