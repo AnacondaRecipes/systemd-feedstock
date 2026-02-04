@@ -1,6 +1,5 @@
 {% set name = "systemd" %}
-{% set version = "257.7" %}
-{% set build = 0 %}
+{% set version = "247" %}
 {% set libudev_abi_version = "1" %}
 {% set libsystemd_abi_version = "0" %}
 
@@ -10,39 +9,37 @@ package:
 
 source:
   url: https://github.com/{{ name }}/{{ name }}/archive/v{{ version }}.tar.gz
-  sha256: 70ecf759260549486045d065555d2f8a0ac0b8523d8f58227559fbd6d7523b08
-  patches:
-    - 0001-sd-netlink-define-NFPROTO_NETDEV-for-linux-headers-4.patch
-    - 0002-missing_input-Fix-typo-defining-KEY_ALS_TOGGLE.patch
-    - 0003-terminal-util-define-TIOCGPTPEER-for-linux-4.13.patch
+  sha256: 77146f7b27334aa69ef6692bed92c3c893685150f481e7254b81d4ea0f66c640
 
 build:
-  number: {{ build }}
+  number: 0
   skip: true  # [not linux]
 
 requirements:
   build:
-    - {{ compiler('c') }}
     - {{ stdlib("c") }}
+    - {{ compiler('c') }}
+    - m4
     - coreutils
     - gperf
     - jinja2
-    - meson
+    - meson <0.58
     - ninja
     - pkg-config
-    - python *
+    - python
   host:
     - elfutils
     - libacl
     - libcap
-    - libgcrypt
-    - lz4-c
+    - libxcrypt
     - p11-kit
     - libseccomp
-    - openssl
     - util-linux
-    - liblzma-devel
-    - zstd
+    - libgcrypt {{ libgcrypt }}
+    - lz4-c {{ lz4_c }}
+    - openssl {{ openssl }}
+    - xz {{ xz }}
+    - zstd {{ zstd }}
 
 outputs:
   - name: libudev{{ libudev_abi_version }}
@@ -51,8 +48,8 @@ outputs:
       - lib/libudev.so.{{ libudev_abi_version }}.*
     requirements:
       build:
-        - {{ compiler('c') }}
         - {{ stdlib("c") }}
+        - {{ compiler('c') }}
       host:
         - libcap
     test:
@@ -63,7 +60,7 @@ outputs:
         # library
         - test -f $PREFIX/lib/libudev.so.{{ libudev_abi_version }}
     about:
-      home: https://www.freedesktop.org/wiki/Software/systemd/
+      home: https://www.freedesktop.org/wiki/Software/systemd
       dev_url: https://github.com/systemd/systemd
       license: LGPL-2.1-or-later
       license_file: LICENSE.LGPL2.1
@@ -94,7 +91,7 @@ outputs:
         - test -h $PREFIX/lib/libudev.so
         - test -f $PREFIX/lib/libudev.so
     about:
-      home: https://www.freedesktop.org/wiki/Software/systemd/
+      home: https://www.freedesktop.org/wiki/Software/systemd
       dev_url: https://github.com/systemd/systemd
       license: LGPL-2.1-or-later
       license_file: LICENSE.LGPL2.1
@@ -106,14 +103,14 @@ outputs:
       - lib/libsystemd.so.{{ libsystemd_abi_version }}.*
     requirements:
       build:
-        - {{ compiler('c') }}
         - {{ stdlib("c") }}
+        - {{ compiler('c') }}
       host:
         - libcap
-        - libgcrypt
-        - lz4-c
-        - liblzma-devel
-        - zstd
+        - libgcrypt {{ libgcrypt }}
+        - lz4-c {{ lz4_c }}
+        - xz {{ xz }}
+        - zstd {{ zstd }}
     test:
       commands:
         # verify that library and its symlink gets installed
@@ -122,7 +119,7 @@ outputs:
         # library
         - test -f $PREFIX/lib/libsystemd.so.{{ libsystemd_abi_version }}
     about:
-      home: https://www.freedesktop.org/wiki/Software/systemd/
+      home: https://www.freedesktop.org/wiki/Software/systemd
       dev_url: https://github.com/systemd/systemd
       license: LGPL-2.1-or-later
       license_file: LICENSE.LGPL2.1
@@ -165,15 +162,16 @@ outputs:
         - test -h $PREFIX/lib/libsystemd.so
         - test -f $PREFIX/lib/libsystemd.so
     about:
-      home: https://www.freedesktop.org/wiki/Software/systemd/
+      home: https://www.freedesktop.org/wiki/Software/systemd
       dev_url: https://github.com/systemd/systemd
       license: LGPL-2.1-or-later
       license_file: LICENSE.LGPL2.1
       summary: Development package for the systemd library
 
 about:
-  home: https://www.freedesktop.org/wiki/Software/systemd/
+  home: https://www.freedesktop.org/wiki/Software/systemd
   license: LGPL-2.1-or-later AND GPL-2.0-or-later
+  license_family: LGPL
   license_file:
     - LICENSE.LGPL2.1
     - LICENSE.GPL2
@@ -196,6 +194,7 @@ about:
     directories and settings, and daemons to manage simple network
     configuration, network time synchronization, log forwarding, and name
     resolution.
+  doc_url: https://github.com/systemd/systemd
   dev_url: https://github.com/systemd/systemd
 
 extra:

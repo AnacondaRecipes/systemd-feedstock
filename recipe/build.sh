@@ -2,10 +2,12 @@
 
 set -ex
 
-mkdir forgebuild
-
 meson_config_args=(
+    -Dbuildtype=release
+    -Dlibdir=lib
     -Dmode=release
+    -Drootprefix=$PREFIX
+    -Dsplit-user=false
     -Dsplit-bin=false
     -Dsysconfdir=etc
     -Dsysvinit-path=""
@@ -18,34 +20,33 @@ meson_config_args=(
     -Danalyze=false
     -Dbacklight=false
     -Dbinfmt=false
-    -Dbpf-framework=disabled
+    -Dbpf-framework=false
     -Dcoredump=false
     -Defi=false
     -Denvironment-d=false
     -Dfirstboot=false
     -Dhibernate=false
-    -Dhomed=disabled
+    -Dhomed=false
     -Dhostnamed=false
     -Dhwdb=false
-    -Dimportd=disabled
+    -Dimportd=false
     -Dinitrd=false
     -Dkernel-install=false
     -Dlocaled=false
-    -Dlogind=false
     -Dmachined=false
-    -Dmountfsd=false
-    -Dnetworkd=false
-    -Dnsresourced=false
+    -Dlogind=true
+    -Djournal=true
+    -Dnetworkd=true
     -Dnss-myhostname=false
-    -Dnss-mymachines=disabled
-    -Dnss-resolve=disabled
+    -Dnss-mymachines=false
+    -Dnss-resolve=false
     -Dnss-systemd=false
     -Doomd=false
     -Dportabled=false
     -Dpstore=false
     -Dquotacheck=false
     -Drandomseed=False
-    -Drepart=disabled
+    -Drepart=false
     -Dresolve=false
     -Drfkill=false
     -Dsysext=false
@@ -64,9 +65,9 @@ meson_config_args=(
 # This avoids doing things like building the catalog database under /var
 export DESTDIR="/"
 
-meson setup forgebuild \
+meson setup build \
     ${MESON_ARGS} \
     "${meson_config_args[@]}" \
     --wrap-mode=nofallback
-meson compile -v -C forgebuild -j ${CPU_COUNT}
-meson install -C forgebuild --no-rebuild
+meson compile -v -C build -j ${CPU_COUNT}
+meson install -C build --no-rebuild
